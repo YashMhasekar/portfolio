@@ -1,0 +1,563 @@
+/* ============================================
+   Navbar
+   ============================================ */
+
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-2xl);
+  /* Reserve notch space */
+  padding-top: calc(var(--space-md) + var(--sat));
+  padding-left: calc(var(--space-2xl) + var(--sal));
+  padding-right: calc(var(--space-2xl) + var(--sar));
+  background: rgba(10, 10, 15, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Desktop nav links */
+.nav-links {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.nav-link {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  font-weight: 400;
+  position: relative;
+  touch-action: manipulation;
+  /* Minimum tap target */
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-link:hover  { color: var(--text-primary); }
+
+.nav-link.active {
+  color: var(--accent-light);
+  background: rgba(108, 99, 255, 0.1);
+}
+
+/* Right-side controls group */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* Reduced-motion toggle */
+#reduced-motion-toggle {
+  color: var(--text-muted);
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  touch-action: manipulation;
+}
+
+#reduced-motion-toggle:hover  { color: var(--accent-light); }
+#reduced-motion-toggle.active {
+  color: var(--accent);
+  background: rgba(108, 99, 255, 0.15);
+}
+
+/* ============================================
+   Hamburger Button (mobile only — hidden on desktop)
+   ============================================ */
+
+#mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  transition: background var(--transition);
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+#mobile-menu-btn:hover,
+#mobile-menu-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hamburger-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: transform 0.28s ease, opacity 0.2s ease;
+  pointer-events: none;
+}
+
+/* Animate to X when open */
+#mobile-menu-btn[aria-expanded="true"] .hamburger-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+#mobile-menu-btn[aria-expanded="true"] .hamburger-bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+#mobile-menu-btn[aria-expanded="true"] .hamburger-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ============================================
+   Mobile Navigation Drawer
+   ============================================ */
+
+#mobile-nav {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+
+/* Visible state */
+#mobile-nav.open { pointer-events: auto; }
+
+/* Dimmed backdrop */
+.mobile-nav-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+#mobile-nav.open .mobile-nav-backdrop { opacity: 1; }
+
+/* Slide-in drawer panel */
+.mobile-nav-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(300px, 85vw);
+  background: rgba(12, 12, 22, 0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Respect safe areas */
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+  padding-right: var(--sar);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+#mobile-nav.open .mobile-nav-drawer {
+  transform: translateX(0);
+}
+
+/* Drawer header */
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-nav-logo {
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+#mobile-nav-close {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: color var(--transition), background var(--transition);
+  touch-action: manipulation;
+  flex-shrink: 0;
+}
+
+#mobile-nav-close:hover,
+#mobile-nav-close:focus-visible {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Drawer links */
+.mobile-nav-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg) 0;
+  gap: var(--space-xs);
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: left;
+  border-radius: 0;
+  transition: color var(--transition), background var(--transition), padding-left var(--transition);
+  touch-action: manipulation;
+  /* Large tap target */
+  min-height: 52px;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:focus-visible {
+  color: var(--text-primary);
+  background: rgba(108, 99, 255, 0.08);
+  padding-left: calc(var(--space-xl) + 4px);
+}
+
+.mobile-nav-link.active {
+  color: var(--accent-light);
+  background: rgba(108, 99, 255, 0.12);
+}
+
+.mnl-index {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  font-family: var(--font-display);
+  min-width: 24px;
+}
+
+.mobile-nav-link.active .mnl-index {
+  color: var(--accent);
+}
+
+/* Drawer footer */
+.mobile-nav-footer {
+  padding: var(--space-lg) var(--space-xl);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+/* ============================================
+   Section Indicators (Right Side Dots)
+   ============================================ */
+
+#section-indicators {
+  position: fixed;
+  right: var(--space-xl);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--text-muted);
+  background: transparent;
+  transition: all var(--transition);
+  cursor: pointer;
+  position: relative;
+  touch-action: manipulation;
+  /* Larger invisible tap target via padding */
+  padding: 8px;
+  margin: -8px;
+}
+
+.indicator:hover  { border-color: var(--accent-light); transform: scale(1.3); }
+
+.indicator.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.indicator::before {
+  content: attr(title);
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.indicator:hover::before { opacity: 1; }
+
+/* ============================================
+   Project Modal
+   ============================================ */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Safe-area-aware padding */
+  padding: max(var(--space-xl), calc(var(--sat) + var(--space-md)))
+           max(var(--space-xl), calc(var(--sar) + var(--space-md)))
+           max(var(--space-xl), calc(var(--sab) + var(--space-md)))
+           max(var(--space-xl), calc(var(--sal) + var(--space-md)));
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  /* Prevent scroll behind modal on mobile */
+  overscroll-behavior: contain;
+}
+
+.modal-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  max-width: 580px;
+  width: 100%;
+  position: relative;
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Allow scrolling inside on short screens */
+  max-height: calc(100dvh - 4rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.modal-backdrop.visible .modal-content {
+  transform: translateY(0) scale(1);
+}
+
+/* Thin scrollbar inside modal */
+.modal-content::-webkit-scrollbar       { width: 4px; }
+.modal-content::-webkit-scrollbar-track { background: transparent; }
+.modal-content::-webkit-scrollbar-thumb { background: rgba(108,99,255,0.3); border-radius: 2px; }
+
+.modal-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  font-size: var(--fs-2xl);
+  color: var(--text-muted);
+  /* Large tap target */
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  touch-action: manipulation;
+  z-index: 2;
+}
+
+.modal-close:hover,
+.modal-close:focus-visible {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.modal-content h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  margin-bottom: var(--space-md);
+  padding-right: var(--space-2xl);
+  line-height: 1.2;
+}
+
+.modal-content p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-lg);
+}
+
+.modal-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.modal-stack .stack-badge {
+  font-size: var(--fs-xs);
+  padding: 0.3rem 0.7rem;
+  background: rgba(108, 99, 255, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--accent-light);
+  border: 1px solid rgba(108, 99, 255, 0.15);
+}
+
+.modal-links {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.modal-links .btn {
+  flex: 1;
+  justify-content: center;
+  min-width: 140px;
+  /* Minimum tap target height */
+  min-height: 44px;
+}
+
+/* ============================================
+   Responsive — Tablet (max 1024px)
+   ============================================ */
+
+@media (max-width: 1024px) {
+  #navbar {
+    padding-left:  calc(var(--space-lg) + var(--sal));
+    padding-right: calc(var(--space-lg) + var(--sar));
+  }
+}
+
+/* ============================================
+   Responsive — Mobile nav takeover (max 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  #navbar {
+    padding: var(--space-sm) calc(var(--space-lg) + var(--sar))
+             var(--space-sm) calc(var(--space-lg) + var(--sal));
+    padding-top: calc(var(--space-sm) + var(--sat));
+  }
+
+  /* Hide desktop links */
+  .nav-links { display: none; }
+
+  /* Show hamburger */
+  #mobile-menu-btn { display: flex; }
+
+  /* Tighten logo size */
+  .nav-logo { font-size: var(--fs-lg); }
+
+  /* Side dots: shift inward so they don't hit edge */
+  #section-indicators {
+    right: calc(var(--space-sm) + var(--sar));
+    gap: var(--space-sm);
+  }
+
+  /* Hide text labels on dots */
+  .indicator::before { display: none; }
+
+  /* Make dots slightly larger for touch */
+  .indicator {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* ============================================
+   Responsive — Small Mobile (max 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  #navbar {
+    padding-left:  calc(var(--space-md) + var(--sal));
+    padding-right: calc(var(--space-md) + var(--sar));
+  }
+
+  .nav-logo { font-size: var(--fs-base); }
+
+  /* Modal fills the screen almost completely on tiny phones */
+  .modal-content {
+    max-height: calc(100dvh - 2rem);
+  }
+
+  .modal-links {
+    flex-direction: column;
+  }
+
+  .modal-links .btn {
+    min-width: unset;
+    width: 100%;
+  }
+
+  /* Modal close — always reachable */
+  .modal-close {
+    top: var(--space-sm);
+    right: var(--space-sm);
+  }
+
+  /* Modal content title doesn't overflow */
+  .modal-content h2 {
+    font-size: clamp(1.1rem, 5vw, 1.45rem);
+    padding-right: 3rem; /* room for X button */
+  }
+}
+
+/* ============================================
+   Landscape phone — compact nav height
+   ============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  #navbar {
+    padding-top: calc(0.35rem + var(--sat));
+    padding-bottom: 0.35rem;
+  }
+
+  /* Side dots: smaller gap to fit */
+  #section-indicators { gap: 0.4rem; }
+
+  .indicator { width: 7px; height: 7px; }
+}

@@ -1,0 +1,685 @@
+/* ============================================
+   PROJECT PLANETS — Interactive 3D Planet Cards
+   ============================================ */
+
+/* ============================================
+   MOBILE PROJECTS PAGE
+   Completely separate from the fixed overlay system.
+   Uses normal document flow so all 4 planets can be
+   reached by natural vertical scrolling.
+   Hidden on desktop — shown on mobile when section 3
+   is active, via JS toggling aria-hidden + .active.
+   ============================================ */
+
+#mobile-projects-page {
+  /* Hidden by default on ALL screen sizes */
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  /* Scrollable — this is the key: overflow-y auto on a fixed
+     full-screen element gives us a scrollable viewport that
+     sits on top of the 3D canvas */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  /* Respect safe areas */
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+  -webkit-overflow-scrolling: touch;
+  /* Invisible background — 3D canvas shows through */
+  background: transparent;
+  pointer-events: none;
+}
+
+/* Active state — shown by JS */
+#mobile-projects-page.active {
+  display: block;
+  pointer-events: auto;
+}
+
+.mp-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  /* Top padding: clear the fixed navbar */
+  padding-top: calc(4rem + var(--sat));
+  padding-bottom: calc(3rem + var(--sab));
+  padding-left:  max(var(--space-md), var(--sal));
+  padding-right: max(var(--space-md), var(--sar));
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+/* Header inside mobile page */
+.mp-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+/* Individual planet block — one per project */
+.mp-planet-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  /* Each block has generous bottom margin so planets never touch */
+  margin-bottom: clamp(3rem, 10vw, 5rem);
+}
+
+.mp-planet-block:last-of-type {
+  margin-bottom: 2rem;
+}
+
+/* Planet wrapper inside mobile page:
+   explicit square size so WebGL canvas gets real dimensions */
+.planet-wrapper.mp-pw {
+  /* Responsive size: 240px on 320px screen, 300px on 480px screen */
+  width:  clamp(240px, 68vw, 300px);
+  height: clamp(240px, 68vw, 300px);
+  /* Not a circle clip — we just need the outline for focus */
+  flex-shrink: 0;
+}
+
+/* Planet info text below each planet */
+.mp-planet-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  /* Clear space below the planet for the orbit ring overhang */
+  margin-top: 2.4rem;
+  text-align: center;
+  /* Ensure it can't cause horizontal overflow */
+  max-width: 100%;
+  padding: 0 var(--space-md);
+}
+
+.mp-planet-name {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 4vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.9);
+}
+
+.mp-planet-type {
+  font-size: clamp(0.7rem, 3vw, 0.8rem);
+  letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+}
+
+.mp-tap-hint {
+  font-size: 0.72rem;
+  color: var(--accent-light);
+  letter-spacing: 0.06em;
+  margin-top: 0.25rem;
+  opacity: 0.75;
+}
+
+/* Continue button at the bottom */
+.mp-continue {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 0.5rem;
+}
+
+.mp-continue-btn {
+  min-width: 200px;
+}
+
+/* On desktop (> 768px): always hide mobile page, always show overlay */
+@media (min-width: 769px) {
+  #mobile-projects-page { display: none !important; }
+}
+
+/* ============================================
+   Section indicators — hide on mobile projects page
+   to prevent overlap with planets
+   ============================================ */
+
+body.mobile-projects-active #section-indicators {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============================================
+   Transition fade for mobile projects page
+   ============================================ */
+
+#mobile-projects-page {
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+#mobile-projects-page.active {
+  opacity: 1;
+}
+
+/* ============================================
+   Planet Stage — 2×2 grid (DESKTOP only)
+   On mobile this is replaced by #mobile-projects-page
+   ============================================ */
+
+.planet-stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem 2.5rem;
+  width: 100%;
+  max-width: 780px;
+  place-items: center;
+}
+
+/* ============================================
+   Planet Wrapper
+   ============================================ */
+
+.planet-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  touch-action: manipulation;
+}
+
+/* Keyboard focus ring */
+.planet-wrapper:focus-visible {
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.6);
+  border-radius: 50%;
+}
+
+/* Hover lift — desktop only */
+@media (hover: hover) {
+  .planet-wrapper:hover { transform: translateY(-6px); }
+}
+
+/* Touch active state — gives tap feedback on mobile */
+.planet-wrapper:active {
+  transform: scale(1.04);
+}
+
+/* When a planet is in burst/open state, prevent re-click */
+.planet-wrapper.is-open { pointer-events: none; }
+
+/* ============================================
+   Planet Canvas
+   ============================================ */
+
+.planet-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+  display: block;
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.7));
+  transition: filter 0.4s ease;
+}
+
+@media (hover: hover) {
+  .planet-wrapper:hover .planet-canvas {
+    filter: drop-shadow(0 12px 48px rgba(0, 0, 0, 0.8));
+  }
+}
+
+/* ============================================
+   Orbit Ring
+   ============================================ */
+
+.planet-orbit-ring {
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transform: rotateX(72deg) rotateZ(-15deg);
+  pointer-events: none;
+  transition: border-color 0.4s ease, opacity 0.4s ease;
+  opacity: 0.5;
+}
+
+@media (hover: hover) {
+  .planet-wrapper:hover .planet-orbit-ring {
+    border-color: rgba(108, 99, 255, 0.25);
+    opacity: 1;
+  }
+}
+
+.planet-orbit-ring::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.04);
+  transform: rotateZ(30deg);
+}
+
+/* ============================================
+   Planet Label
+   ============================================ */
+
+.planet-label {
+  position: absolute;
+  bottom: -2.4rem;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  pointer-events: none;
+  white-space: nowrap;
+  /* Always visible on mobile (no hover) */
+  opacity: 1;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* On hover-capable devices: hide until hover */
+@media (hover: hover) {
+  .planet-label {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+
+  .planet-wrapper:hover .planet-label,
+  .planet-wrapper:focus-visible .planet-label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.pl-name {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+}
+
+.pl-type {
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* ============================================
+   Burst Overlay Canvas
+   ============================================ */
+
+.planet-burst-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 1;
+}
+
+/* ============================================
+   Modal Backdrop
+   ============================================ */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Safe-area-aware padding */
+  padding: max(1.5rem, calc(var(--sat) + 1rem))
+           max(1.5rem, calc(var(--sar) + 1rem))
+           max(1.5rem, calc(var(--sab) + 1rem))
+           max(1.5rem, calc(var(--sal) + 1rem));
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+  overscroll-behavior: contain;
+}
+
+.modal-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ============================================
+   Modal Content Card
+   ============================================ */
+
+.modal-content {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100dvh - 3rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform: translateY(28px) scale(0.94);
+  opacity: 0;
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.4s ease;
+  overscroll-behavior: contain;
+}
+
+.modal-backdrop.visible .modal-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Scrollbar inside modal */
+.modal-content::-webkit-scrollbar       { width: 4px; }
+.modal-content::-webkit-scrollbar-track { background: transparent; }
+.modal-content::-webkit-scrollbar-thumb { background: rgba(108, 99, 255, 0.3); border-radius: 2px; }
+
+/* ============================================
+   Modal Close Button
+   ============================================ */
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  /* Large tap target */
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s ease, background 0.2s ease;
+  z-index: 2;
+  touch-action: manipulation;
+}
+
+.modal-close:hover,
+.modal-close:focus-visible {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================
+   Modal Planet Glyph
+   ============================================ */
+
+.modal-planet-glyph {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  margin-bottom: 0.9rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.modal-planet-glyph.glyph-mercury {
+  background: radial-gradient(circle at 35% 35%, #b0acaa, #6e6e6e);
+  box-shadow: 0 0 18px rgba(140, 130, 120, 0.4);
+}
+.modal-planet-glyph.glyph-venus {
+  background: radial-gradient(circle at 35% 35%, #f0da8a, #c49040);
+  box-shadow: 0 0 18px rgba(220, 180, 80, 0.4);
+}
+.modal-planet-glyph.glyph-earth {
+  background: radial-gradient(circle at 35% 35%, #4ca8e8, #1a5a90);
+  box-shadow: 0 0 18px rgba(60, 140, 220, 0.4);
+}
+.modal-planet-glyph.glyph-mars {
+  background: radial-gradient(circle at 35% 35%, #e06030, #8a2810);
+  box-shadow: 0 0 18px rgba(200, 80, 40, 0.4);
+}
+
+/* ============================================
+   Modal Typography
+   ============================================ */
+
+.modal-content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 4vw, 1.45rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+  /* Room for close button */
+  padding-right: 3rem;
+  line-height: 1.2;
+}
+
+.modal-achievement {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  /* Allow long achievement text to wrap */
+  white-space: normal;
+  word-break: break-word;
+}
+
+.modal-content p:not(.modal-achievement) {
+  font-size: clamp(0.8rem, 2.5vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.75;
+  margin-bottom: 1.1rem;
+}
+
+/* ============================================
+   Modal Stack Badges
+   ============================================ */
+
+.modal-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.4rem;
+}
+
+.modal-stack .stack-badge {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.65rem;
+  background: rgba(108, 99, 255, 0.1);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  border-radius: 6px;
+  color: var(--accent-light);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   Modal Link Buttons
+   ============================================ */
+
+.modal-links {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.modal-links .btn {
+  flex: 1;
+  justify-content: center;
+  min-width: 130px;
+  min-height: 44px;
+  font-size: 0.75rem;
+  touch-action: manipulation;
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .planet-wrapper,
+  .planet-canvas,
+  .planet-label,
+  .planet-orbit-ring,
+  .modal-content,
+  .modal-backdrop {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+body.reduced-motion .planet-wrapper,
+body.reduced-motion .planet-canvas,
+body.reduced-motion .planet-label,
+body.reduced-motion .planet-orbit-ring,
+body.reduced-motion .modal-content,
+body.reduced-motion .modal-backdrop {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+
+/* ============================================
+   Responsive — Large Desktop (1440px+)
+   ============================================ */
+
+@media (min-width: 1440px) {
+  .planet-wrapper {
+    width: 300px;
+    height: 300px;
+  }
+
+  .planet-stage {
+    gap: 2.5rem 3rem;
+    max-width: 860px;
+  }
+}
+
+/* ============================================
+   Responsive — Tablet (≤ 1024px)
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .planet-stage {
+    gap: 1.5rem 1.8rem;
+    max-width: 640px;
+  }
+
+  .planet-wrapper {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+/* ============================================
+   Responsive — Small Tablet (≤ 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  .planet-stage {
+    /* Keep 2-column but tighter */
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem 1rem;
+    max-width: 520px;
+  }
+
+  .planet-wrapper {
+    /* clamp: 170px at 360px vw → 220px at 768px vw */
+    width:  clamp(170px, 44vw, 220px);
+    height: clamp(170px, 44vw, 220px);
+  }
+
+  .pl-name { font-size: 0.62rem; }
+  .pl-type { font-size: 0.52rem; }
+
+  /* Modal: wider on tablet */
+  .modal-content { width: min(520px, 100%); }
+}
+
+/* ============================================
+   Responsive — Mobile (≤ 540px) — single column
+   ============================================ */
+
+@media (max-width: 540px) {
+  .planet-stage {
+    grid-template-columns: 1fr;
+    /* Vertical single-column; extra gap for label below each planet */
+    gap: 3.5rem;
+    max-width: 100%;
+    padding-bottom: 2rem;
+  }
+
+  .planet-wrapper {
+    /* clamp: 220px at 320px → 300px at 540px */
+    width:  clamp(220px, 62vw, 300px);
+    height: clamp(220px, 62vw, 300px);
+  }
+
+  /* Labels always visible in single-column, slightly larger */
+  .pl-name { font-size: 0.7rem; }
+  .pl-type { font-size: 0.58rem; }
+
+  /* Modal: nearly full-width */
+  .modal-content {
+    width: calc(100vw - 2rem);
+    max-height: calc(100dvh - 2.5rem);
+  }
+
+  /* Stack modal buttons vertically */
+  .modal-links {
+    flex-direction: column;
+  }
+
+  .modal-links .btn {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+/* ============================================
+   Responsive — Small Mobile (≤ 380px)
+   ============================================ */
+
+@media (max-width: 380px) {
+  .planet-wrapper {
+    width:  clamp(200px, 58vw, 260px);
+    height: clamp(200px, 58vw, 260px);
+  }
+
+  .planet-stage { gap: 3rem; }
+}
+
+/* ============================================
+   Landscape phone — 2-column compact
+   ============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .planet-stage {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1rem;
+    max-width: 480px;
+  }
+
+  .planet-wrapper {
+    width:  clamp(120px, 22vw, 170px);
+    height: clamp(120px, 22vw, 170px);
+  }
+
+  .planet-stage { padding-bottom: 1rem; }
+
+  /* Modal: horizontal scroll-friendly */
+  .modal-content {
+    max-height: calc(100dvh - 1.5rem);
+  }
+}
