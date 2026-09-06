@@ -75,4 +75,12 @@ export const projects = [
     liveUrl: 'https://feedback-nlp-engine-frontend.onrender.com/',
     achievement: 'Runner-Up — Technovation 1.0 Hackathon',
   },
+  {
+    title: 'AI Newsmania',
+    description: 'Built an AI-powered news aggregation platform that curates, categorises, and summarises real-time news using NLP pipelines and generative AI, delivering personalised news feeds.',
+    stack: ['React.js', 'Python', 'Flask', 'Gemini API', 'NewsAPI'],
+    githubUrl: 'https://github.com/YashMhasekar/AI_NEWSMANIA',
+    liveUrl: 'https://ai-newsmania1.onrender.com/',
+    achievement: null,
+  },
 ];

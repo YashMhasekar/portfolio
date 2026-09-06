@@ -1,0 +1,419 @@
+/* ============================================
+   ACHIEVEMENTS & TEAMS — Section Styles
+   Section index 5, id: achievements-overlay
+   ============================================ */
+
+/* ============================================
+   Section layout
+   ============================================ */
+
+#achievements-overlay {
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  padding: calc(4rem + var(--sat)) var(--space-md) calc(var(--space-xl) + var(--sab));
+  overflow: hidden;
+}
+
+/* ============================================
+   Header block
+   ============================================ */
+
+.ach-header {
+  text-align: center;
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.ach-header.ach-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ach-subtitle {
+  font-size: clamp(0.78rem, 2vw, 0.92rem);
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 0.65rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* ============================================
+   Atmosphere: faint radial glow
+   ============================================ */
+
+#achievements-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 60%,
+      rgba(108, 99, 255, 0.08) 0%,
+      transparent 70%),
+    radial-gradient(ellipse 40% 30% at 20% 80%,
+      rgba(74, 222, 128, 0.04) 0%,
+      transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   Marquee outer — clips the scrolling track
+   ============================================ */
+
+.ach-marquee-outer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0,0,0,0.6) 4%,
+    #000 12%,
+    #000 88%,
+    rgba(0,0,0,0.6) 96%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0,0,0,0.6) 4%,
+    #000 12%,
+    #000 88%,
+    rgba(0,0,0,0.6) 96%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.ach-marquee-outer.ach-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   Marquee track
+   ============================================ */
+
+.ach-marquee-track {
+  display: flex;
+  flex-direction: row;
+  /* baseline so mixed portrait/landscape cards sit evenly */
+  align-items: flex-end;
+  gap: clamp(0.85rem, 2vw, 1.4rem);
+  width: max-content;
+  padding: 0.6rem 0 1.2rem;
+  animation: achScroll var(--ach-duration, 40s) linear infinite;
+  will-change: transform;
+  cursor: default;
+}
+
+/* Pause on hover (desktop) */
+.ach-marquee-outer:hover .ach-marquee-track,
+.ach-marquee-track.ach-paused {
+  animation-play-state: paused;
+}
+
+@keyframes achScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-1 * var(--ach-set-w, 50%))); }
+}
+
+/* ============================================
+   Photo Card
+   -----------------------------------------------
+   KEY CHANGE: No fixed height on the card.
+   Width is capped; height is determined naturally
+   by the image's own aspect ratio.
+
+   Portrait images → tall card (full portrait shown)
+   Landscape images → shorter card (full width shown)
+
+   max-height caps runaway tall portraits so they
+   don't overflow the section on small screens.
+   ============================================ */
+
+.ach-card {
+  position: relative;
+  flex-shrink: 0;
+
+  /* Responsive width cap — portrait images will be narrower
+     naturally; landscape will fill closer to this width */
+  width: clamp(180px, 22vw, 340px);
+
+  /* NO fixed height — let the image dictate it */
+  /* Cap so a 9:16 portrait at max-width stays within viewport */
+  max-height: clamp(300px, 55vh, 480px);
+
+  border-radius: var(--radius-lg);
+  /* overflow:hidden is still needed so border-radius clips the image */
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.55),
+    0 1px 0  rgba(255, 255, 255, 0.06) inset;
+  background: var(--bg-secondary);
+  transition:
+    transform    0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.3s ease,
+    box-shadow   0.3s ease;
+  will-change: transform;
+
+  /* Flex column so the image fills the card */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hover lift — desktop only */
+@media (hover: hover) {
+  .ach-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    border-color: rgba(108, 99, 255, 0.35);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.65),
+      0 0   28px rgba(108, 99, 255, 0.12),
+      0 1px 0   rgba(255, 255, 255, 0.08) inset;
+  }
+}
+
+/* ============================================
+   Photo image inside card
+   -----------------------------------------------
+   KEY CHANGE: width:100%, height:auto — the image
+   renders at its natural aspect ratio.
+   object-fit is NOT used so nothing gets cropped.
+   ============================================ */
+
+.ach-card img {
+  width: 100%;
+  height: auto;          /* natural aspect ratio — no cropping */
+  display: block;
+  border-radius: inherit;
+  filter: brightness(0.93) saturate(1.05);
+  transition: filter 0.35s ease, transform 0.4s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  /* Vertically constrain inside the card's max-height */
+  max-height: inherit;
+  object-fit: contain;  /* fallback for browsers that need it */
+}
+
+@media (hover: hover) {
+  .ach-card:hover img {
+    filter: brightness(1.0) saturate(1.12);
+    transform: scale(1.04);
+  }
+}
+
+/* ============================================
+   Subtle gradient overlay (depth, not crop)
+   ============================================ */
+
+.ach-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 5, 18, 0.38) 0%,
+    rgba(5, 5, 18, 0.08) 30%,
+    transparent 55%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ============================================
+   Portrait card — naturally narrower width cap
+   so tall images don't appear stretched wide
+   ============================================ */
+
+.ach-card.ach-card--portrait {
+  /* Portrait images are typically 3:4 or 9:16.
+     Narrowing the width lets the natural height shine
+     without the card becoming too dominant. */
+  width: clamp(130px, 16vw, 240px);
+}
+
+@media (max-width: 1024px) {
+  .ach-card.ach-card--portrait {
+    width: clamp(120px, 19vw, 210px);
+  }
+}
+
+@media (max-width: 768px) {
+  .ach-card.ach-card--portrait {
+    width: clamp(110px, 30vw, 180px);
+  }
+}
+
+@media (max-width: 480px) {
+  .ach-card.ach-card--portrait {
+    width: clamp(100px, 36vw, 160px);
+  }
+}
+
+/* ============================================
+   Footer line
+   ============================================ */
+
+.ach-footer-line {
+  font-size: clamp(0.7rem, 1.8vw, 0.82rem);
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: clamp(1rem, 2.5vw, 1.6rem);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s;
+  position: relative;
+  z-index: 2;
+}
+
+.ach-footer-line.ach-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   Reduced motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .ach-marquee-track {
+    animation: none !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100% !important;
+  }
+
+  .ach-card {
+    transition: none !important;
+    /* In wrapping mode, cap width so cards don't get too wide */
+    width: clamp(160px, 42vw, 300px);
+  }
+
+  .ach-header,
+  .ach-footer-line,
+  .ach-marquee-outer {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+body.reduced-motion .ach-marquee-track {
+  animation: none !important;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100% !important;
+}
+
+body.reduced-motion .ach-card {
+  width: clamp(160px, 42vw, 300px);
+}
+
+body.reduced-motion .ach-header,
+body.reduced-motion .ach-footer-line,
+body.reduced-motion .ach-marquee-outer {
+  transition: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ============================================
+   Responsive — Tablet (≤ 1024px)
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .ach-card {
+    width: clamp(170px, 26vw, 280px);
+    max-height: clamp(260px, 50vh, 420px);
+  }
+}
+
+/* ============================================
+   Responsive — Tablet portrait / Large mobile (≤ 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  #achievements-overlay {
+    padding-top: calc(4.5rem + var(--sat));
+  }
+
+  .ach-card {
+    width: clamp(155px, 46vw, 240px);
+    max-height: clamp(220px, 48vh, 380px);
+  }
+
+  .ach-marquee-outer {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    );
+  }
+}
+
+/* ============================================
+   Responsive — Small mobile (≤ 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  #achievements-overlay {
+    padding-top: calc(4rem + var(--sat));
+  }
+
+  .ach-card {
+    width: clamp(140px, 56vw, 210px);
+    max-height: clamp(200px, 46vh, 340px);
+  }
+
+  .ach-subtitle { font-size: 0.75rem; }
+}
+
+/* ============================================
+   Landscape phone — compact vertical padding
+   ============================================ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  #achievements-overlay {
+    padding-top: calc(3rem + var(--sat));
+    gap: 0;
+  }
+
+  .ach-header {
+    margin-bottom: 0.6rem;
+  }
+
+  .ach-card {
+    width: clamp(120px, 18vw, 190px);
+    max-height: clamp(140px, 38vh, 220px);
+  }
+}

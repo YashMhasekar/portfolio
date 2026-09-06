@@ -83,6 +83,24 @@ const PROJECT_PLANETS = [
     atmosphereOpacity: 0.22,
     ringColor: 0x8a2810,
   },
+  {
+    id: 'jupiter',
+    planetName: 'Jupiter',
+    projectName: 'AI Newsmania',
+    fullTitle: 'AI-Powered News Aggregation Platform',
+    achievement: null,
+    description:
+      'Built an AI-powered news aggregation platform that curates, categorises, and summarises real-time news using NLP pipelines and generative AI, delivering personalised news feeds.',
+    stack: ['React.js', 'Python', 'Flask', 'Gemini API', 'NewsAPI'],
+    githubUrl: 'https://github.com/YashMhasekar/AI_NEWSMANIA',
+    liveUrl: 'https://ai-newsmania1.onrender.com/',
+    glyphClass: 'glyph-jupiter',
+    accentColor: new THREE.Color(0xd4a855),
+    burstColor: '#e8c070',
+    atmosphereColor: 0xd4b880,
+    atmosphereOpacity: 0.28,
+    ringColor: 0xb08840,
+  },
 ];
 
 // ============================================
@@ -93,17 +111,15 @@ const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const IS_TOUCH  = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
 function detectQuality() {
-  const cores   = navigator.hardwareConcurrency || 2;
-  const isMob   = IS_MOBILE;
-  if (isMob || cores <= 2) return 'low';
-  if (cores <= 4)          return 'medium';
+  const cores = navigator.hardwareConcurrency || 2;
+  if (IS_MOBILE || cores <= 2) return 'low';
+  if (cores <= 4)              return 'medium';
   return 'high';
 }
 
-const QUALITY    = detectQuality();
+const QUALITY     = detectQuality();
 const PLANET_SEGS = QUALITY === 'low' ? 24 : QUALITY === 'medium' ? 36 : 52;
 
-// Per-device DPR cap: mobile ≤ 1.5, desktop ≤ 2
 function getDeviceDPR() {
   return IS_MOBILE
     ? Math.min(window.devicePixelRatio, 1.5)
@@ -132,11 +148,11 @@ function buildMercuryTex() {
     g.addColorStop(0.7, '#949088'); g.addColorStop(1, '#807c78');
     ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
     for (let i = 0; i < 90; i++) {
-      const x = Math.random()*s, y = Math.random()*s, r = 1.5+Math.random()*12;
+      const x = Math.random()*s, y = Math.random()*s, r = 1.5 + Math.random()*12;
       const rg = ctx.createRadialGradient(x-r*0.2, y-r*0.2, 0, x, y, r);
       rg.addColorStop(0, `rgba(55,52,48,${0.5+Math.random()*0.35})`);
       rg.addColorStop(0.7, `rgba(45,42,38,${0.3+Math.random()*0.2})`);
-      rg.addColorStop(1, `rgba(130,124,118,0.15)`);
+      rg.addColorStop(1, 'rgba(130,124,118,0.15)');
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
       ctx.fillStyle = rg; ctx.fill();
     }
@@ -147,17 +163,17 @@ function buildMercuryTex() {
 function buildVenusTex() {
   return makeCanvasTex(256, (ctx, s) => {
     const g = ctx.createLinearGradient(0, 0, 0, s);
-    g.addColorStop(0,'#f0d880'); g.addColorStop(0.25,'#d8b848');
-    g.addColorStop(0.5,'#ecc860'); g.addColorStop(0.75,'#c8a030'); g.addColorStop(1,'#e4cc70');
+    g.addColorStop(0, '#f0d880'); g.addColorStop(0.25, '#d8b848');
+    g.addColorStop(0.5, '#ecc860'); g.addColorStop(0.75, '#c8a030'); g.addColorStop(1, '#e4cc70');
     ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
     for (let i = 0; i < 20; i++) {
-      const y = (i/20)*s, h = 4+Math.random()*14, alpha = 0.06+Math.random()*0.16;
+      const y = (i/20)*s, h = 4 + Math.random()*14, alpha = 0.06 + Math.random()*0.16;
       ctx.beginPath();
       for (let x = 0; x <= s; x += 18) {
-        const ny = y + Math.sin(x*0.038+i*1.3)*5;
-        x === 0 ? ctx.moveTo(x,ny) : ctx.lineTo(x,ny);
+        const ny = y + Math.sin(x*0.038 + i*1.3)*5;
+        x === 0 ? ctx.moveTo(x, ny) : ctx.lineTo(x, ny);
       }
-      ctx.lineTo(s,y+h); ctx.lineTo(0,y+h); ctx.closePath();
+      ctx.lineTo(s, y+h); ctx.lineTo(0, y+h); ctx.closePath();
       ctx.fillStyle = i%3===0 ? `rgba(255,210,100,${alpha})` : `rgba(170,110,30,${alpha})`;
       ctx.fill();
     }
@@ -167,50 +183,42 @@ function buildVenusTex() {
 // ---- Earth ----
 function buildEarthTex() {
   return makeCanvasTex(512, (ctx, s) => {
-    ctx.fillStyle = '#1565a0'; ctx.fillRect(0,0,s,s);
-    // North America
+    ctx.fillStyle = '#1565a0'; ctx.fillRect(0, 0, s, s);
     ctx.beginPath();
     ctx.moveTo(s*0.10,s*0.20); ctx.bezierCurveTo(s*0.22,s*0.17,s*0.29,s*0.22,s*0.27,s*0.32);
     ctx.bezierCurveTo(s*0.26,s*0.41,s*0.20,s*0.46,s*0.18,s*0.51);
     ctx.bezierCurveTo(s*0.13,s*0.49,s*0.07,s*0.43,s*0.07,s*0.32); ctx.closePath();
     ctx.fillStyle='#338844'; ctx.fill();
-    // South America
     ctx.beginPath();
     ctx.moveTo(s*0.20,s*0.56); ctx.bezierCurveTo(s*0.27,s*0.53,s*0.31,s*0.61,s*0.28,s*0.69);
     ctx.bezierCurveTo(s*0.25,s*0.79,s*0.18,s*0.81,s*0.13,s*0.73);
     ctx.bezierCurveTo(s*0.11,s*0.63,s*0.14,s*0.57,s*0.20,s*0.56); ctx.closePath();
     ctx.fillStyle='#3a9040'; ctx.fill();
-    // Europe
     ctx.beginPath();
     ctx.moveTo(s*0.46,s*0.22); ctx.bezierCurveTo(s*0.53,s*0.20,s*0.57,s*0.24,s*0.55,s*0.31);
     ctx.bezierCurveTo(s*0.52,s*0.37,s*0.46,s*0.37,s*0.43,s*0.30); ctx.closePath();
     ctx.fillStyle='#4a9430'; ctx.fill();
-    // Africa
     ctx.beginPath();
     ctx.moveTo(s*0.46,s*0.35); ctx.bezierCurveTo(s*0.57,s*0.32,s*0.61,s*0.41,s*0.59,s*0.53);
     ctx.bezierCurveTo(s*0.57,s*0.65,s*0.50,s*0.71,s*0.47,s*0.66);
     ctx.bezierCurveTo(s*0.42,s*0.57,s*0.42,s*0.45,s*0.46,s*0.35); ctx.closePath();
     ctx.fillStyle='#5aa030'; ctx.fill();
-    // Asia
     ctx.beginPath();
     ctx.moveTo(s*0.55,s*0.20); ctx.bezierCurveTo(s*0.73,s*0.17,s*0.84,s*0.22,s*0.85,s*0.31);
     ctx.bezierCurveTo(s*0.87,s*0.41,s*0.81,s*0.49,s*0.72,s*0.51);
     ctx.bezierCurveTo(s*0.64,s*0.53,s*0.55,s*0.49,s*0.54,s*0.38);
     ctx.bezierCurveTo(s*0.52,s*0.30,s*0.53,s*0.24,s*0.55,s*0.20); ctx.closePath();
     ctx.fillStyle='#3d8c34'; ctx.fill();
-    // Australia
     ctx.beginPath(); ctx.ellipse(s*0.76,s*0.63,s*0.065,s*0.055,0.2,0,Math.PI*2);
     ctx.fillStyle='#8a9a30'; ctx.fill();
-    // Polar caps
     const np = ctx.createRadialGradient(s/2,0,0,s/2,0,s*0.18);
     np.addColorStop(0,'rgba(218,232,255,0.92)'); np.addColorStop(1,'rgba(180,210,255,0)');
     ctx.fillStyle=np; ctx.fillRect(0,0,s,s*0.18);
     const sp = ctx.createRadialGradient(s/2,s,0,s/2,s,s*0.14);
     sp.addColorStop(0,'rgba(218,232,255,0.88)'); sp.addColorStop(1,'rgba(180,210,255,0)');
     ctx.fillStyle=sp; ctx.fillRect(0,s*0.86,s,s*0.14);
-    // Clouds
     for (let i=0;i<65;i++){
-      const cx=Math.random()*s,cy=Math.random()*s,cr=7+Math.random()*28;
+      const cx=Math.random()*s, cy=Math.random()*s, cr=7+Math.random()*28;
       const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,cr);
       cg.addColorStop(0,`rgba(255,255,255,${0.16+Math.random()*0.20})`);
       cg.addColorStop(0.5,`rgba(255,255,255,${0.05+Math.random()*0.08})`);
@@ -228,7 +236,7 @@ function buildMarsTex() {
     g.addColorStop(0.6,'#d4521a'); g.addColorStop(1,'#b83c0e');
     ctx.fillStyle=g; ctx.fillRect(0,0,s,s);
     for (let i=0;i<130;i++){
-      const x=Math.random()*s,y=Math.random()*s,r=2+Math.random()*16;
+      const x=Math.random()*s, y=Math.random()*s, r=2+Math.random()*16;
       ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
       ctx.fillStyle=Math.random()>0.55
         ?`rgba(${55+Math.random()*35},${15+Math.random()*15},${4+Math.random()*8},0.36)`
@@ -238,6 +246,44 @@ function buildMarsTex() {
     const npc=ctx.createRadialGradient(s/2,4,0,s/2,4,s*0.13);
     npc.addColorStop(0,'rgba(238,228,208,0.82)'); npc.addColorStop(1,'rgba(210,198,180,0)');
     ctx.fillStyle=npc; ctx.fillRect(0,0,s,s*0.13);
+  });
+}
+
+// ---- Jupiter ----
+function buildJupiterTex() {
+  return makeCanvasTex(256, (ctx, s) => {
+    const bandColors = [
+      '#e8d5a3','#c8a870','#b89060','#d4b885','#c09050',
+      '#e8d5a3','#b88050','#d4c090','#c8a870','#b07840',
+      '#e0cc98','#c09060','#d8b878','#b88050','#e8d5a3',
+    ];
+    const bandH = s / bandColors.length;
+    bandColors.forEach((col, i) => {
+      ctx.fillStyle = col;
+      ctx.fillRect(0, i * bandH, s, bandH + 1);
+    });
+    for (let b = 0; b < bandColors.length; b++) {
+      for (let j = 0; j < 6; j++) {
+        const x = Math.random() * s;
+        const y = b * bandH + bandH / 2;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 18 + Math.random()*28, 3 + Math.random()*5, 0, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${180+Math.floor(Math.random()*40)},${120+Math.floor(Math.random()*40)},${60+Math.floor(Math.random()*20)},0.28)`;
+        ctx.fill();
+      }
+    }
+    const grsX = s*0.62, grsY = s*0.56;
+    const grsG = ctx.createRadialGradient(grsX,grsY,0,grsX,grsY,22);
+    grsG.addColorStop(0,'rgba(185,62,32,0.95)');
+    grsG.addColorStop(0.5,'rgba(160,50,20,0.75)');
+    grsG.addColorStop(1,'rgba(140,70,30,0)');
+    ctx.fillStyle=grsG; ctx.beginPath(); ctx.ellipse(grsX,grsY,22,14,0.2,0,Math.PI*2); ctx.fill();
+    const ph = ctx.createLinearGradient(0,0,0,s*0.18);
+    ph.addColorStop(0,'rgba(200,170,100,0.22)'); ph.addColorStop(1,'rgba(200,170,100,0)');
+    ctx.fillStyle=ph; ctx.fillRect(0,0,s,s*0.18);
+    const ps2 = ctx.createLinearGradient(0,s,0,s*0.82);
+    ps2.addColorStop(0,'rgba(200,170,100,0.18)'); ps2.addColorStop(1,'rgba(200,170,100,0)');
+    ctx.fillStyle=ps2; ctx.fillRect(0,s*0.82,s,s*0.18);
   });
 }
 
@@ -271,8 +317,8 @@ function createAtmosphere(radius, color, opacity) {
         gl_FragColor  = vec4(atmosphereColor, alpha);
       }
     `,
-    side:       THREE.BackSide,
-    blending:   THREE.AdditiveBlending,
+    side:        THREE.BackSide,
+    blending:    THREE.AdditiveBlending,
     transparent: true,
     depthWrite:  false,
   });
@@ -313,7 +359,7 @@ class PlanetScene {
     this.renderer.setSize(w, h);
     this.renderer.setPixelRatio(dpr);
     this.renderer.setClearColor(0x000000, 0);
-    this.renderer.toneMapping        = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMapping         = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
 
     this.scene  = new THREE.Scene();
@@ -321,7 +367,6 @@ class PlanetScene {
     this.camera.position.set(0, 0, 3.2);
     this.camera.lookAt(0, 0, 0);
 
-    // Lighting
     this.scene.add(new THREE.AmbientLight(0x111122, 0.55));
     const keyLight = new THREE.PointLight(0xfff5e8, 2.8, 30);
     keyLight.position.set(-2.5, 2.2, 4);
@@ -333,16 +378,21 @@ class PlanetScene {
     rimLight.position.set(0, 3, -5);
     this.scene.add(rimLight);
 
-    // Planet texture
-    const texBuilder = { mercury: buildMercuryTex, venus: buildVenusTex, earth: buildEarthTex, mars: buildMarsTex }[this.data.id];
-    const tex        = texBuilder();
-    const roughness  = { mercury: 0.96, venus: 0.72, earth: 0.58, mars: 0.93 }[this.data.id];
+    const texBuilder = {
+      mercury: buildMercuryTex,
+      venus:   buildVenusTex,
+      earth:   buildEarthTex,
+      mars:    buildMarsTex,
+      jupiter: buildJupiterTex,
+    }[this.data.id];
+    const tex       = texBuilder();
+    const roughness = { mercury: 0.96, venus: 0.72, earth: 0.58, mars: 0.93, jupiter: 0.65 }[this.data.id];
 
     this.planetMat = new THREE.MeshStandardMaterial({
-      map:              tex,
+      map:               tex,
       roughness,
-      metalness:        this.data.id === 'earth' ? 0.06 : 0.02,
-      emissive:         this.data.accentColor.clone(),
+      metalness:         this.data.id === 'earth' ? 0.06 : 0.02,
+      emissive:          this.data.accentColor.clone(),
       emissiveIntensity: this.emissiveIntensity,
     });
 
@@ -352,23 +402,20 @@ class PlanetScene {
     );
     this.scene.add(this.planetMesh);
 
-    // Atmosphere (skip on low quality)
     if (this.data.atmosphereOpacity > 0 && this.quality !== 'low') {
       this.atmosphere = createAtmosphere(1.10, this.data.atmosphereColor, this.data.atmosphereOpacity);
       this.scene.add(this.atmosphere);
     }
 
-    const tilts  = { mercury: 0, venus: 0.05, earth: 0.41, mars: 0.44 };
+    const tilts = { mercury: 0, venus: 0.05, earth: 0.41, mars: 0.44, jupiter: 0.05 };
     this.planetMesh.rotation.z = tilts[this.data.id] || 0;
 
-    const speeds  = { mercury: 0.008, venus: 0.004, earth: 0.018, mars: 0.016 };
-    // Slow rotation on mobile to save GPU
+    const speeds = { mercury: 0.008, venus: 0.004, earth: 0.018, mars: 0.016, jupiter: 0.022 };
     this.rotSpeed = speeds[this.data.id] * (IS_MOBILE ? 0.7 : 1.0);
 
     this.clock = new THREE.Clock();
   }
 
-  // Called when wrapper element resizes (ResizeObserver or window resize)
   resize() {
     const w = this.canvas.offsetWidth;
     const h = this.canvas.offsetHeight;
@@ -383,11 +430,11 @@ class PlanetScene {
   setHover(val) { this.isHovered = val; }
 
   _updateHover(delta) {
-    const target      = this.isHovered ? 1 : 0;
+    const target = this.isHovered ? 1 : 0;
     this.hoverProgress += (target - this.hoverProgress) * Math.min(delta * 6, 1);
-    const baseEmit    = 0.04, hoverEmit = 0.22;
-    this.emissiveIntensity             = baseEmit + (hoverEmit - baseEmit) * this.hoverProgress;
-    this.planetMat.emissiveIntensity   = this.emissiveIntensity;
+    const baseEmit = 0.04, hoverEmit = 0.22;
+    this.emissiveIntensity           = baseEmit + (hoverEmit - baseEmit) * this.hoverProgress;
+    this.planetMat.emissiveIntensity = this.emissiveIntensity;
     if (this.atmosphere) {
       this.atmosphere.material.uniforms.hoverBoost.value = this.hoverProgress;
     }
@@ -421,18 +468,17 @@ class PlanetScene {
 
 class BurstAnimator {
   constructor() {
-    this.canvas    = null;
-    this.ctx       = null;
-    this.animId    = null;
-    this.particles = [];
-    this.ring      = { radius: 0, maxRadius: 0, opacity: 0 };
-    this.startTime = 0;
-    // Shorter burst duration on mobile for snappier feel
-    this.duration  = IS_MOBILE ? 700 : 900;
+    this.canvas     = null;
+    this.ctx        = null;
+    this.animId     = null;
+    this.particles  = [];
+    this.ring       = { radius: 0, maxRadius: 0, opacity: 0 };
+    this.startTime  = 0;
+    this.duration   = IS_MOBILE ? 700 : 900;
     this.onComplete = null;
-    this.originX   = 0;
-    this.originY   = 0;
-    this.color     = '#ffffff';
+    this.originX    = 0;
+    this.originY    = 0;
+    this.color      = '#ffffff';
     this._ensureCanvas();
   }
 
@@ -464,7 +510,6 @@ class BurstAnimator {
     this.canvas.style.display = 'block';
     this.canvas.style.opacity = '1';
 
-    // Fewer particles on mobile
     const count = QUALITY === 'low'
       ? (IS_MOBILE ? 18 : 28)
       : QUALITY === 'medium'
@@ -473,17 +518,16 @@ class BurstAnimator {
 
     this.particles = [];
     for (let i = 0; i < count; i++) {
-      const angle = (i/count)*Math.PI*2 + Math.random()*0.4;
-      // Smaller radius on mobile so particles stay within viewport
+      const angle      = (i/count)*Math.PI*2 + Math.random()*0.4;
       const speedScale = IS_MOBILE ? 0.7 : 1.0;
-      const speed = (80 + Math.random()*220) * speedScale;
-      const size  = 2 + Math.random()*5;
-      const life  = 0.55 + Math.random()*0.45;
+      const speed      = (80 + Math.random()*220) * speedScale;
+      const size       = 2 + Math.random()*5;
+      const life       = 0.55 + Math.random()*0.45;
       this.particles.push({
         x: originX, y: originY,
         vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
         size, life, maxLife: life,
-        alpha: 0.7+Math.random()*0.3,
+        alpha: 0.7 + Math.random()*0.3,
         colorShift: Math.random() > 0.7,
       });
     }
@@ -502,68 +546,50 @@ class BurstAnimator {
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Expanding ring
     const ringT = Math.min(t*1.6, 1);
     const ringR = this.ring.radius + (this.ring.maxRadius - this.ring.radius)*easeOutCubic(ringT);
     const ringA = this.ring.opacity * (1 - easeInCubic(t));
     if (ringA > 0.005) {
       this.ctx.save();
-      this.ctx.strokeStyle = this.color;
-      this.ctx.globalAlpha = ringA;
-      this.ctx.lineWidth   = 2.5;
-      this.ctx.shadowBlur  = 24;
-      this.ctx.shadowColor = this.color;
-      this.ctx.beginPath();
-      this.ctx.arc(this.originX, this.originY, ringR, 0, Math.PI*2);
-      this.ctx.stroke();
-      this.ctx.restore();
+      this.ctx.strokeStyle = this.color; this.ctx.globalAlpha = ringA;
+      this.ctx.lineWidth = 2.5; this.ctx.shadowBlur = 24; this.ctx.shadowColor = this.color;
+      this.ctx.beginPath(); this.ctx.arc(this.originX, this.originY, ringR, 0, Math.PI*2);
+      this.ctx.stroke(); this.ctx.restore();
     }
 
-    // Second ring
     if (t > 0.12) {
       const t2 = Math.min((t-0.12)*1.4, 1);
       const r2 = this.ring.radius*0.8 + this.ring.maxRadius*1.4*easeOutCubic(t2);
       const a2 = 0.35*(1-easeInCubic(t2));
       if (a2 > 0.005) {
         this.ctx.save();
-        this.ctx.strokeStyle = this.color;
-        this.ctx.globalAlpha = a2;
-        this.ctx.lineWidth   = 1.2;
-        this.ctx.shadowBlur  = 16;
-        this.ctx.shadowColor = this.color;
-        this.ctx.beginPath();
-        this.ctx.arc(this.originX, this.originY, r2, 0, Math.PI*2);
-        this.ctx.stroke();
-        this.ctx.restore();
+        this.ctx.strokeStyle = this.color; this.ctx.globalAlpha = a2;
+        this.ctx.lineWidth = 1.2; this.ctx.shadowBlur = 16; this.ctx.shadowColor = this.color;
+        this.ctx.beginPath(); this.ctx.arc(this.originX, this.originY, r2, 0, Math.PI*2);
+        this.ctx.stroke(); this.ctx.restore();
       }
     }
 
-    // Central flare
     const flareT     = Math.min(t*3, 1);
     const flareAlpha = flareT < 0.5
       ? easeOutCubic(flareT*2)*0.55
       : (1-easeInCubic((flareT-0.5)*2))*0.55;
     if (flareAlpha > 0.005) {
       const flareR = 30 + 80*easeOutCubic(Math.min(t*2, 1));
-      const fg     = this.ctx.createRadialGradient(this.originX,this.originY,0,this.originX,this.originY,flareR);
+      const fg = this.ctx.createRadialGradient(this.originX,this.originY,0,this.originX,this.originY,flareR);
       fg.addColorStop(0, `${this.color}ff`);
       fg.addColorStop(0.3, `${this.color}88`);
       fg.addColorStop(1, `${this.color}00`);
-      this.ctx.save();
-      this.ctx.globalAlpha = flareAlpha;
-      this.ctx.fillStyle   = fg;
-      this.ctx.beginPath();
-      this.ctx.arc(this.originX, this.originY, flareR, 0, Math.PI*2);
-      this.ctx.fill();
-      this.ctx.restore();
+      this.ctx.save(); this.ctx.globalAlpha = flareAlpha; this.ctx.fillStyle = fg;
+      this.ctx.beginPath(); this.ctx.arc(this.originX, this.originY, flareR, 0, Math.PI*2);
+      this.ctx.fill(); this.ctx.restore();
     }
 
-    // Particles
     const dt = 0.016;
     this.particles.forEach(p => {
       if (p.life <= 0) return;
-      p.x  += p.vx*dt; p.y  += p.vy*dt;
-      p.vx *= 0.96;    p.vy *= 0.96;
+      p.x += p.vx*dt; p.y += p.vy*dt;
+      p.vx *= 0.96; p.vy *= 0.96;
       p.life -= dt*1.4;
       const lifeRatio = Math.max(p.life/p.maxLife, 0);
       const alpha     = p.alpha * lifeRatio * lifeRatio;
@@ -571,12 +597,9 @@ class BurstAnimator {
       this.ctx.save();
       this.ctx.globalAlpha = alpha;
       this.ctx.fillStyle   = p.colorShift ? '#ffffff' : this.color;
-      this.ctx.shadowBlur  = 8;
-      this.ctx.shadowColor = this.color;
-      this.ctx.beginPath();
-      this.ctx.arc(p.x, p.y, p.size*lifeRatio, 0, Math.PI*2);
-      this.ctx.fill();
-      this.ctx.restore();
+      this.ctx.shadowBlur  = 8; this.ctx.shadowColor = this.color;
+      this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size*lifeRatio, 0, Math.PI*2);
+      this.ctx.fill(); this.ctx.restore();
     });
 
     if (t < 1) {
@@ -593,7 +616,6 @@ class BurstAnimator {
     }
   }
 
-  // Reverse: particles converge back to centre
   reverse(originX, originY, color, onComplete) {
     this._resize();
     this.originX    = originX;
@@ -620,8 +642,8 @@ class BurstAnimator {
       this.particles.push({
         sx, sy, x: sx, y: sy,
         tx: originX, ty: originY,
-        size:       1.5+Math.random()*3.5,
-        alpha:      0.4+Math.random()*0.4,
+        size:       1.5 + Math.random()*3.5,
+        alpha:      0.4 + Math.random()*0.4,
         delay:      Math.random()*0.25,
         colorShift: Math.random() > 0.65,
       });
@@ -635,57 +657,43 @@ class BurstAnimator {
     const t   = Math.min((now - this.startTime) / this.duration, 1);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Converging ring
     const maxR  = Math.min(window.innerWidth, window.innerHeight) * (IS_MOBILE ? 0.18 : 0.22);
     const ringR = maxR * (1 - easeInCubic(t));
     const ringA = 0.45 * (1-t);
     if (ringA > 0.005 && ringR > 2) {
       this.ctx.save();
-      this.ctx.strokeStyle = this.color;
-      this.ctx.globalAlpha = ringA;
-      this.ctx.lineWidth   = 1.5;
-      this.ctx.shadowBlur  = 18;
-      this.ctx.shadowColor = this.color;
-      this.ctx.beginPath();
-      this.ctx.arc(this.originX, this.originY, ringR, 0, Math.PI*2);
-      this.ctx.stroke();
-      this.ctx.restore();
+      this.ctx.strokeStyle = this.color; this.ctx.globalAlpha = ringA;
+      this.ctx.lineWidth = 1.5; this.ctx.shadowBlur = 18; this.ctx.shadowColor = this.color;
+      this.ctx.beginPath(); this.ctx.arc(this.originX, this.originY, ringR, 0, Math.PI*2);
+      this.ctx.stroke(); this.ctx.restore();
     }
 
     this.particles.forEach(p => {
       const pt = Math.max((t-p.delay)/(1-p.delay), 0);
       if (pt <= 0) return;
-      const et  = easeInCubic(Math.min(pt, 1));
-      p.x       = p.sx + (p.tx-p.sx)*et;
-      p.y       = p.sy + (p.ty-p.sy)*et;
+      const et    = easeInCubic(Math.min(pt, 1));
+      p.x         = p.sx + (p.tx-p.sx)*et;
+      p.y         = p.sy + (p.ty-p.sy)*et;
       const alpha = p.alpha*(1-et*0.7);
       if (alpha < 0.01) return;
       this.ctx.save();
       this.ctx.globalAlpha = alpha;
       this.ctx.fillStyle   = p.colorShift ? '#ffffff' : this.color;
-      this.ctx.shadowBlur  = 6;
-      this.ctx.shadowColor = this.color;
-      this.ctx.beginPath();
-      this.ctx.arc(p.x, p.y, p.size*(1-et*0.5), 0, Math.PI*2);
-      this.ctx.fill();
-      this.ctx.restore();
+      this.ctx.shadowBlur  = 6; this.ctx.shadowColor = this.color;
+      this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size*(1-et*0.5), 0, Math.PI*2);
+      this.ctx.fill(); this.ctx.restore();
     });
 
-    // Implosion flash
     if (t > 0.75) {
       const ft = (t-0.75)/0.25;
       const fa = easeOutCubic(ft)*0.4*(1-ft);
       if (fa > 0.005) {
-        const fr = 20+60*easeOutCubic(ft);
+        const fr = 20 + 60*easeOutCubic(ft);
         const fg = this.ctx.createRadialGradient(this.originX,this.originY,0,this.originX,this.originY,fr);
         fg.addColorStop(0, `${this.color}ff`); fg.addColorStop(1, `${this.color}00`);
-        this.ctx.save();
-        this.ctx.globalAlpha = fa;
-        this.ctx.fillStyle   = fg;
-        this.ctx.beginPath();
-        this.ctx.arc(this.originX, this.originY, fr, 0, Math.PI*2);
-        this.ctx.fill();
-        this.ctx.restore();
+        this.ctx.save(); this.ctx.globalAlpha = fa; this.ctx.fillStyle = fg;
+        this.ctx.beginPath(); this.ctx.arc(this.originX, this.originY, fr, 0, Math.PI*2);
+        this.ctx.fill(); this.ctx.restore();
       }
     }
 
@@ -722,24 +730,19 @@ function openModal(data, reducedMotion) {
   const live   = document.getElementById('modal-live');
 
   glyph.className = `modal-planet-glyph ${data.glyphClass}`;
-
   title.innerHTML = `${data.projectName}<span style="font-size:0.72em;font-weight:400;color:rgba(255,255,255,0.45);display:block;margin-top:0.1rem;">${data.fullTitle}</span>`;
 
   if (data.achievement) {
-    achEl.textContent  = '🏆 ' + data.achievement;
+    achEl.textContent   = '🏆 ' + data.achievement;
     achEl.style.display = 'block';
   } else {
     achEl.style.display = 'none';
   }
 
   desc.textContent = data.description;
-
-  stack.innerHTML = data.stack
-    .map(s => `<span class="stack-badge">${s}</span>`)
-    .join('');
-
-  github.href = data.githubUrl;
-  live.href   = data.liveUrl;
+  stack.innerHTML  = data.stack.map(s => `<span class="stack-badge">${s}</span>`).join('');
+  github.href      = data.githubUrl;
+  live.href        = data.liveUrl;
 
   modal.setAttribute('aria-hidden', 'false');
 
@@ -774,15 +777,15 @@ function getElementCenter(el) {
 // ============================================
 // 9. TOUCH-TAP DETECTION
 //    Distinguishes a deliberate tap from a scroll gesture.
-//    Prevents modal opening when the user is just scrolling
-//    through the planets section.
+//    preventDefault() in onTouchEnd cancels the synthetic
+//    click that the browser fires after touchend, preventing
+//    double-firing on touch devices.
 // ============================================
 
 function makeTapDetector(onTap) {
   let startX = 0, startY = 0, startTime = 0;
-  // Maximum movement (px) and duration (ms) allowed for a tap
-  const MAX_MOVE = 12;
-  const MAX_TIME = 400;
+  const MAX_MOVE = 12;  // px
+  const MAX_TIME = 400; // ms
 
   return {
     onTouchStart(e) {
@@ -795,7 +798,7 @@ function makeTapDetector(onTap) {
       const dy      = Math.abs(e.changedTouches[0].clientY - startY);
       const elapsed = Date.now() - startTime;
       if (dx < MAX_MOVE && dy < MAX_MOVE && elapsed < MAX_TIME) {
-        // Deliberate tap — prevent the synthetic click that follows
+        // Cancel the synthetic click the browser would fire next
         e.preventDefault();
         onTap();
       }
@@ -808,14 +811,14 @@ function makeTapDetector(onTap) {
 // ============================================
 
 const ProjectPlanets = (() => {
-  let planetScenes    = [];   // desktop canvas PlanetScenes
-  let mobilePlanetScenes = []; // mobile canvas PlanetScenes
-  let burst           = null;
-  let activeData      = null;
-  let isOpen          = false;
-  let reducedMotion   = false;
-  let resizeOb        = null;
-  let mobileMode      = false;
+  let planetScenes       = [];   // desktop canvas PlanetScenes
+  let mobilePlanetScenes = [];   // mobile canvas PlanetScenes
+  let burst         = null;
+  let activeData    = null;
+  let isOpen        = false;
+  let reducedMotion = false;
+  let resizeOb      = null;
+  let mobileMode    = false;
 
   function init() {
     reducedMotion =
@@ -830,10 +833,8 @@ const ProjectPlanets = (() => {
       if (!canvasEl) return;
       const ps = new PlanetScene(data, canvasEl, QUALITY);
       planetScenes.push(ps);
-
       const wrapper = document.getElementById(`pw-${data.id}`);
       if (!wrapper) return;
-
       _wireWrapper(wrapper, ps, data);
     });
 
@@ -843,23 +844,22 @@ const ProjectPlanets = (() => {
       if (!canvasEl) return;
       const ps = new PlanetScene(data, canvasEl, QUALITY);
       mobilePlanetScenes.push(ps);
-
       const wrapper = document.getElementById(`mp-pw-${data.id}`);
       if (!wrapper) return;
-
       _wireWrapper(wrapper, ps, data);
     });
 
-    // Modal close
+    // Modal close button
     const closeBtn = document.getElementById('modal-close');
     if (closeBtn) closeBtn.addEventListener('click', handleClose);
 
+    // Click on backdrop outside card
     const backdrop = document.getElementById('project-modal');
     if (backdrop) backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) handleClose();
     });
 
-    // ---- ResizeObserver — all canvases ----
+    // ResizeObserver — keep every canvas sized to its wrapper
     if (window.ResizeObserver) {
       resizeOb = new ResizeObserver(entries => {
         entries.forEach(entry => {
@@ -877,29 +877,47 @@ const ProjectPlanets = (() => {
     }
   }
 
-  // Wire pointer + touch + keyboard events onto a wrapper
+  // ---- Wire all interaction events onto a wrapper element ----
   function _wireWrapper(wrapper, ps, data) {
-    // ---- Desktop: hover + click ----
+    // Hover glow — mouse/pointer only
     wrapper.addEventListener('mouseenter', () => ps.setHover(true));
     wrapper.addEventListener('mouseleave', () => ps.setHover(false));
     wrapper.addEventListener('focusin',    () => ps.setHover(true));
     wrapper.addEventListener('focusout',   () => ps.setHover(false));
+
+    // -------------------------------------------------------
+    // CLICK — fires for every mouse/pointer click.
+    //
+    // IMPORTANT: Do NOT guard this with `if (IS_TOUCH) return`.
+    // Desktop browsers (Chrome, Edge, Firefox) all report
+    // navigator.maxTouchPoints > 0 on non-touch hardware, so
+    // IS_TOUCH evaluates to true even on a regular desktop.
+    // Blocking clicks based on IS_TOUCH silently breaks the
+    // entire interaction on those browsers.
+    //
+    // On real touch devices, makeTapDetector calls
+    // e.preventDefault() in touchend, which cancels the
+    // synthetic click the browser fires after the touch
+    // sequence — so there is no double-open.
+    // -------------------------------------------------------
     wrapper.addEventListener('click', () => {
-      if (IS_TOUCH) return;
       handlePlanetClick(data, wrapper, ps);
     });
 
-    // ---- Touch: tap detection ----
+    // Touch: tap detection + visual brightness feedback
     if (IS_TOUCH) {
       const tap = makeTapDetector(() => handlePlanetClick(data, wrapper, ps));
+      // passive:true on touchstart (no blocking needed)
+      // passive:false on touchend so tap.onTouchEnd can call preventDefault()
       wrapper.addEventListener('touchstart', tap.onTouchStart, { passive: true });
       wrapper.addEventListener('touchend',   tap.onTouchEnd,   { passive: false });
+      // Visual glow while finger is pressed
       wrapper.addEventListener('touchstart', () => ps.setHover(true),  { passive: true });
       wrapper.addEventListener('touchend',   () => ps.setHover(false), { passive: true });
       wrapper.addEventListener('touchcancel',() => ps.setHover(false), { passive: true });
     }
 
-    // ---- Keyboard ----
+    // Keyboard
     wrapper.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -916,13 +934,11 @@ const ProjectPlanets = (() => {
     wrapper.classList.add('is-open');
     ps.setHover(false);
 
-    // Ensure the sibling wrapper (desktop ↔ mobile) never has a stale is-open
-    // that would block pointer-events on the wrong element
-    const isMob = window.innerWidth <= 768;
-    const siblingId = isMob
-      ? `pw-${data.id}`        // we're on mobile, clear desktop sibling
-      : `mp-pw-${data.id}`;    // we're on desktop, clear mobile sibling
-    const sibling = document.getElementById(siblingId);
+    // Clear any stale is-open on the sibling wrapper (desktop vs mobile)
+    // to prevent pointer-events:none getting stuck on the wrong element
+    const isMob      = window.innerWidth <= 768;
+    const siblingId  = isMob ? `pw-${data.id}` : `mp-pw-${data.id}`;
+    const sibling    = document.getElementById(siblingId);
     if (sibling) {
       sibling.classList.remove('is-open');
       sibling.style.opacity    = '';
@@ -963,20 +979,20 @@ const ProjectPlanets = (() => {
     closeModal(false, () => {
       if (!activeData) { isOpen = false; return; }
 
-      // On mobile, prefer the mobile wrapper; on desktop prefer the desktop one.
-      // We must NOT use || short-circuit because both elements exist in the DOM
-      // simultaneously — desktop wrapper is in the fixed overlay (hidden),
-      // mobile wrapper is in the scrollable page. Using the wrong one leaves
-      // is-open + opacity:0.35 stuck on the mobile wrapper permanently.
-      const isMobile = window.innerWidth <= 768;
+      // Choose the correct wrapper based on current layout.
+      // Cannot use || short-circuit: both desktop and mobile wrappers
+      // exist in DOM simultaneously. Using the wrong one leaves
+      // is-open + opacity:0.35 stuck on the mobile wrapper forever.
+      const isMobile       = window.innerWidth <= 768;
       const desktopWrapper = document.getElementById(`pw-${activeData.id}`);
       const mobileWrapper  = document.getElementById(`mp-pw-${activeData.id}`);
-      const wrapper = isMobile ? (mobileWrapper || desktopWrapper)
-                                : (desktopWrapper || mobileWrapper);
+      const wrapper        = isMobile
+        ? (mobileWrapper  || desktopWrapper)
+        : (desktopWrapper || mobileWrapper);
 
       const center = wrapper
         ? getElementCenter(wrapper)
-        : { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        : { x: window.innerWidth/2, y: window.innerHeight/2 };
 
       burst.reverse(center.x, center.y, activeData.burstColor, () => {
         if (wrapper) {
@@ -988,15 +1004,13 @@ const ProjectPlanets = (() => {
             wrapper.style.opacity    = '';
           }, 520);
         }
-        // Also ensure the OTHER wrapper (whichever wasn't used) is fully reset
-        // in case it got partially modified
+        // Also fully reset the other wrapper in case it got partially modified
         const otherWrapper = isMobile ? desktopWrapper : mobileWrapper;
         if (otherWrapper && otherWrapper !== wrapper) {
           otherWrapper.classList.remove('is-open');
           otherWrapper.style.opacity    = '';
           otherWrapper.style.transition = '';
         }
-
         isOpen     = false;
         activeData = null;
       });
@@ -1012,23 +1026,14 @@ const ProjectPlanets = (() => {
     });
   }
 
-  // Called by main.js when switching between desktop/mobile layouts
   function setMobileMode(val) {
     mobileMode = val;
-    // When switching to mobile mode, trigger a resize so canvases
-    // pick up their new CSS dimensions
-    if (val) {
-      setTimeout(() => {
-        mobilePlanetScenes.forEach(ps => ps.resize());
-      }, 100);
-    } else {
-      setTimeout(() => {
-        planetScenes.forEach(ps => ps.resize());
-      }, 100);
-    }
+    setTimeout(() => {
+      (val ? mobilePlanetScenes : planetScenes).forEach(ps => ps.resize());
+    }, 100);
   }
 
-  function onEscape() { if (isOpen) handleClose(); }
+  function onEscape()            { if (isOpen) handleClose(); }
   function setReducedMotion(val) { reducedMotion = val; }
 
   return { init, onEscape, setReducedMotion, setMobileMode };

@@ -8,14 +8,15 @@ import { skills, projects } from './data.js';
 // ============================================
 // Constants
 // ============================================
-const SECTION_COUNT = 5;
-const SECTION_NAMES = ['Home', 'About', 'Skills', 'Projects', 'Contact'];
+const SECTION_COUNT = 6;
+const SECTION_NAMES = ['Home', 'About', 'Skills', 'Projects', 'Contact', 'Achievements'];
 const CAMERA_POSITIONS = [
     { x: 0, y: 0, z: 5 },
     { x: 0, y: 0.5, z: -10 },
     { x: 0, y: 0, z: -35 },
     { x: 0, y: 0, z: -55 },
     { x: 0, y: 0, z: -75 },
+    { x: 0, y: 0, z: -75 },  // Achievements reuses contact camera depth; overlay handles visuals
 ];
 const LERP_SPEED = 0.04;
 
@@ -619,7 +620,7 @@ function goToSection(index) {
     // Hide all fixed overlay sections
     document.querySelectorAll('.overlay-section').forEach(s => s.classList.remove('active'));
 
-    const overlayIds = ['hero-overlay','about-overlay','skills-overlay','projects-overlay','contact-overlay'];
+    const overlayIds = ['hero-overlay','about-overlay','skills-overlay','projects-overlay','contact-overlay','achievements-overlay'];
 
     if (isMobileLayout() && index === 3) {
         // Mobile Projects — use dedicated scrollable page
@@ -700,6 +701,7 @@ function onKeyDown(e) {
         case 'Home': e.preventDefault(); goToSection(0); break;
         case 'End':  e.preventDefault(); goToSection(SECTION_COUNT-1); break;
         case '1':case '2':case '3':case '4':case '5': goToSection(parseInt(e.key)-1); break;
+        case '6': goToSection(5); break;
     }
 }
 
@@ -862,6 +864,40 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.body.classList.add('reduced-motion');
     motionToggle.classList.add('active');
 }
+
+// ============================================
+// Profile Photo Lightbox
+// ============================================
+(function () {
+  const btn      = document.getElementById('avatar-btn');
+  const lightbox = document.getElementById('avatar-lightbox');
+  const backdrop = document.getElementById('avatar-lightbox-backdrop');
+  const closeBtn = document.getElementById('avatar-lightbox-close');
+  if (!btn || !lightbox) return;
+
+  function openLightbox() {
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    closeBtn.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    btn.focus();
+  }
+
+  btn.addEventListener('click', openLightbox);
+  closeBtn.addEventListener('click', closeLightbox);
+  backdrop.addEventListener('click', closeLightbox);
+
+  // Close on Escape (handled alongside existing onKeyDown)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightbox();
+    }
+  });
+})();
 
 // ============================================
 // Initialize

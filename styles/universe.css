@@ -164,17 +164,20 @@ body.mobile-projects-active #section-indicators {
 }
 
 /* ============================================
-   Planet Stage — 2×2 grid (DESKTOP only)
+   Planet Stage — DESKTOP: 3-top + 2-bottom (5 planets)
    On mobile this is replaced by #mobile-projects-page
    ============================================ */
 
 .planet-stage {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* 3 columns: top row holds 3 planets, bottom row holds 2 centred */
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem 2.5rem;
   width: 100%;
-  max-width: 780px;
+  max-width: 960px;
   place-items: center;
+  /* Centre the orphan 5th planet row (2 items in a 3-col grid) */
+  justify-items: center;
 }
 
 /* ============================================
@@ -449,6 +452,10 @@ body.mobile-projects-active #section-indicators {
   background: radial-gradient(circle at 35% 35%, #e06030, #8a2810);
   box-shadow: 0 0 18px rgba(200, 80, 40, 0.4);
 }
+.modal-planet-glyph.glyph-jupiter {
+  background: radial-gradient(circle at 35% 35%, #e8c870, #b08440);
+  box-shadow: 0 0 18px rgba(220, 180, 80, 0.45);
+}
 
 /* ============================================
    Modal Typography
@@ -556,29 +563,32 @@ body.reduced-motion .modal-backdrop {
 
 @media (min-width: 1440px) {
   .planet-wrapper {
-    width: 300px;
-    height: 300px;
+    width: 280px;
+    height: 280px;
   }
 
   .planet-stage {
     gap: 2.5rem 3rem;
-    max-width: 860px;
+    max-width: 1020px;
   }
 }
 
 /* ============================================
    Responsive — Tablet (≤ 1024px)
+   3-col shrinks to 2-col so layout stays balanced
    ============================================ */
 
 @media (max-width: 1024px) {
   .planet-stage {
+    /* 2-col: rows of 2+2+1, last planet centres automatically */
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem 1.8rem;
-    max-width: 640px;
+    max-width: 600px;
   }
 
   .planet-wrapper {
-    width: 240px;
-    height: 240px;
+    width: 220px;
+    height: 220px;
   }
 }
 

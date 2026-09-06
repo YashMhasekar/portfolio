@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="styles/overlay.css" />
   <link rel="stylesheet" href="styles/ui.css" />
   <link rel="stylesheet" href="styles/universe.css" />
+j  <link rel="stylesheet" href="styles/achievements.css" />
 </head>
 
 <body>
@@ -35,13 +36,23 @@
 
   <!-- Navigation -->
   <nav id="navbar">
-    <a href="#" class="nav-logo">YASH <span class="accent">MHASEKAR</span></a>
+    <div class="nav-brand">
+      <button id="avatar-btn" aria-label="View profile photo" title="View profile photo">
+        <img src="public/2324000702_Yash_Mangesh_Mhasekar.jpeg"
+             alt="Yash Mhasekar"
+             class="nav-avatar"
+             loading="eager"
+             draggable="false" />
+      </button>
+      <a href="#" class="nav-logo">YASH <span class="accent">MHASEKAR</span></a>
+    </div>
     <div class="nav-links" id="nav-links">
       <button class="nav-link active" data-section="0">Home</button>
       <button class="nav-link" data-section="1">About</button>
       <button class="nav-link" data-section="2">Skills</button>
       <button class="nav-link" data-section="3">Projects</button>
       <button class="nav-link" data-section="4">Contact</button>
+      <button class="nav-link" data-section="5">Achievements</button>
     </div>
     <div class="nav-right">
       <button id="reduced-motion-toggle" title="Toggle reduced motion" aria-label="Toggle reduced motion">
@@ -87,6 +98,9 @@
         <button class="mobile-nav-link" data-section="4">
           <span class="mnl-index">05</span> Contact
         </button>
+        <button class="mobile-nav-link" data-section="5">
+          <span class="mnl-index">06</span> Achievements
+        </button>
       </div>
       <div class="mobile-nav-footer">
         <span>AI Engineer &amp; Full-Stack Developer</span>
@@ -101,6 +115,7 @@
     <button class="indicator" data-section="2" title="Skills"></button>
     <button class="indicator" data-section="3" title="Projects"></button>
     <button class="indicator" data-section="4" title="Contact"></button>
+    <button class="indicator" data-section="5" title="Achievements"></button>
   </div>
 
   <!-- HTML Overlays (desktop fixed-overlay system) -->
@@ -181,7 +196,7 @@
          #mobile-projects-page takes over (see below) -->
     <section id="projects-overlay" class="overlay-section">
       <div class="section-label">Featured Projects</div>
-      <p class="projects-subtitle">Four ideas. Four worlds. Built to solve real problems.</p>
+      <p class="projects-subtitle">Each planet is a project. Click any planet to explore it.</p>
       <div class="planet-stage" id="planet-stage">
         <!-- Mercury — FootprintX -->
         <div class="planet-wrapper" id="pw-mercury" data-planet="mercury"
@@ -227,6 +242,17 @@
           </div>
           <div class="planet-orbit-ring" aria-hidden="true"></div>
         </div>
+        <!-- Jupiter — AI Newsmania -->
+        <div class="planet-wrapper" id="pw-jupiter" data-planet="jupiter"
+             role="button" tabindex="0"
+             aria-label="Explore AI Newsmania project">
+          <canvas class="planet-canvas" id="pc-jupiter"></canvas>
+          <div class="planet-label" aria-hidden="true">
+            <span class="pl-name">AI NEWSMANIA</span>
+            <span class="pl-type">News Aggregation Platform</span>
+          </div>
+          <div class="planet-orbit-ring" aria-hidden="true"></div>
+        </div>
       </div>
     </section>
 
@@ -261,6 +287,19 @@
         </div>
       </div>
     </section>
+
+    <!-- Achievements & Teams Overlay — Section 5 -->
+    <section id="achievements-overlay" class="overlay-section">
+      <div class="ach-header">
+        <div class="section-label">Achievements &amp; Teams</div>
+        <p class="ach-subtitle">The milestones, competitions, and people behind the journey.</p>
+      </div>
+      <!-- Marquee container — populated by js/achievements.js -->
+      <div class="ach-marquee-outer" aria-label="Achievement and team photographs">
+        <div class="ach-marquee-track" id="ach-marquee-track"></div>
+      </div>
+      <p class="ach-footer-line">Every milestone was built with people.</p>
+    </section>
   </div>
 
   <!-- =====================================================
@@ -275,7 +314,7 @@
       <!-- Header -->
       <div class="mp-header">
         <div class="section-label">Featured Projects</div>
-        <p class="projects-subtitle">Four ideas. Four worlds. Built to solve real problems.</p>
+        <p class="projects-subtitle">Each planet is a project. Tap any planet to explore it.</p>
       </div>
 
       <!-- Planet 1 — Mercury / FootprintX -->
@@ -338,6 +377,21 @@
         </div>
       </div>
 
+      <!-- Planet 5 — Jupiter / AI Newsmania -->
+      <div class="mp-planet-block" id="mpb-jupiter">
+        <div class="planet-wrapper mp-pw" id="mp-pw-jupiter" data-planet="jupiter"
+             role="button" tabindex="0"
+             aria-label="Explore AI Newsmania project">
+          <canvas class="planet-canvas" id="mp-pc-jupiter"></canvas>
+          <div class="planet-orbit-ring" aria-hidden="true"></div>
+        </div>
+        <div class="mp-planet-info">
+          <span class="mp-planet-name">AI NEWSMANIA</span>
+          <span class="mp-planet-type">Jupiter · News Aggregation Platform</span>
+          <span class="mp-tap-hint">Tap to explore →</span>
+        </div>
+      </div>
+
       <!-- Continue button — takes user back to next section -->
       <div class="mp-continue">
         <button class="btn btn-outline mp-continue-btn" data-section="4">
@@ -395,6 +449,24 @@
   <script type="module" src="js/data.js"></script>
   <script type="module" src="js/universe.js"></script>
   <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/achievements.js"></script>
+
+  <!-- Profile Photo Lightbox -->
+  <div id="avatar-lightbox" aria-modal="true" role="dialog" aria-label="Profile photo" aria-hidden="true">
+    <div id="avatar-lightbox-backdrop"></div>
+    <div id="avatar-lightbox-content">
+      <button id="avatar-lightbox-close" aria-label="Close photo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <img src="public/2324000702_Yash_Mangesh_Mhasekar.jpeg"
+           alt="Yash Mhasekar — AI Engineer & Full-Stack Developer"
+           id="avatar-lightbox-img"
+           draggable="false" />
+      <p id="avatar-lightbox-caption">Yash Mhasekar — AI Engineer &amp; Full-Stack Developer</p>
+    </div>
+  </div>
 </body>
 
 </html>
