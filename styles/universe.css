@@ -164,20 +164,97 @@ body.mobile-projects-active #section-indicators {
 }
 
 /* ============================================
-   Planet Stage — DESKTOP: 3-top + 2-bottom (5 planets)
+   Planet Stage — DESKTOP: 3+3 grid (6 planets)
    On mobile this is replaced by #mobile-projects-page
    ============================================ */
 
 .planet-stage {
   display: grid;
-  /* 3 columns: top row holds 3 planets, bottom row holds 2 centred */
+  /* 3 columns: two equal rows of 3 planets each */
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem 2.5rem;
   width: 100%;
   max-width: 960px;
   place-items: center;
-  /* Centre the orphan 5th planet row (2 items in a 3-col grid) */
   justify-items: center;
+}
+
+/* Saturn wrapper — needs extra room for the 3D ring overhang */
+.planet-wrapper--saturn {
+  overflow: visible;
+}
+
+/* -----------------------------------------------------------------------
+   Saturn rings-expanded:
+   Added by JS to the wrapper (hasRings === true).
+   The wrapper STAYS at its normal grid size so layout doesn't shift.
+   Only the canvas overflows visually via negative inset — no grid disruption.
+   ----------------------------------------------------------------------- */
+.planet-wrapper--rings-expanded {
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
+/* Expand canvas ~1.2× and re-centre over the wrapper.
+   Desktop 280px wrapper → +56px → inset -28px each side               */
+.planet-wrapper--rings-expanded .planet-canvas {
+  border-radius: 0 !important;
+  inset:  -28px !important;
+  width:  calc(100% + 56px) !important;
+  height: calc(100% + 56px) !important;
+  filter: drop-shadow(0 8px 40px rgba(200, 170, 60, 0.4));
+  z-index: 2;
+}
+
+/* Tablet — inset -22px */
+@media (max-width: 1024px) {
+  .planet-wrapper--rings-expanded .planet-canvas {
+    inset:  -22px !important;
+    width:  calc(100% + 44px) !important;
+    height: calc(100% + 44px) !important;
+  }
+}
+
+/* Small tablet ≤768px */
+@media (max-width: 768px) {
+  .planet-wrapper--rings-expanded .planet-canvas {
+    inset:  -18px !important;
+    width:  calc(100% + 36px) !important;
+    height: calc(100% + 36px) !important;
+  }
+}
+
+/* Mobile single-column ≤540px */
+@media (max-width: 540px) {
+  .planet-wrapper--rings-expanded .planet-canvas {
+    inset:  -18px !important;
+    width:  calc(100% + 36px) !important;
+    height: calc(100% + 36px) !important;
+  }
+}
+
+/* Mobile page planets (mp-pw) */
+.mp-pw.planet-wrapper--rings-expanded .planet-canvas {
+  border-radius: 0 !important;
+  inset:  -18px !important;
+  width:  calc(100% + 36px) !important;
+  height: calc(100% + 36px) !important;
+}
+
+/* Belt-and-suspenders: class added directly to canvas by JS */
+.planet-canvas--saturn {
+  border-radius: 0 !important;
+}
+
+/* Saturn orbit-ring decoration — widen and tilt to hint at rings */
+.planet-orbit-ring--saturn {
+  inset: -28px;
+  border-color: rgba(210, 185, 80, 0.12);
+  transform: rotateX(68deg) rotateZ(-20deg);
+}
+
+.planet-orbit-ring--saturn::after {
+  border-color: rgba(210, 185, 80, 0.06);
 }
 
 /* ============================================
@@ -456,6 +533,25 @@ body.mobile-projects-active #section-indicators {
   background: radial-gradient(circle at 35% 35%, #e8c870, #b08440);
   box-shadow: 0 0 18px rgba(220, 180, 80, 0.45);
 }
+.modal-planet-glyph.glyph-saturn {
+  /* Cream-gold body with a subtle off-centre ring band painted via border */
+  background: radial-gradient(circle at 38% 38%, #f5e8a0, #c8a440);
+  box-shadow: 0 0 22px rgba(230, 200, 90, 0.5);
+  /* Simulate a ring crossing the glyph with a rotated pseudo-element — see below */
+  overflow: visible;
+  position: relative;
+}
+.modal-planet-glyph.glyph-saturn::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 3px solid rgba(210, 180, 80, 0.60);
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotateX(68deg) rotateZ(-20deg);
+  pointer-events: none;
+}
 
 /* ============================================
    Modal Typography
@@ -575,12 +671,11 @@ body.reduced-motion .modal-backdrop {
 
 /* ============================================
    Responsive — Tablet (≤ 1024px)
-   3-col shrinks to 2-col so layout stays balanced
+   6 planets → 2-col (3 rows of 2)
    ============================================ */
 
 @media (max-width: 1024px) {
   .planet-stage {
-    /* 2-col: rows of 2+2+1, last planet centres automatically */
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem 1.8rem;
     max-width: 600px;

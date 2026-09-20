@@ -83,4 +83,12 @@ export const projects = [
     liveUrl: 'https://ai-newsmania1.onrender.com/',
     achievement: null,
   },
+  {
+    title: 'TalentMatrix AI — Intelligent Talent Assessment Platform',
+    description: 'Built an AI-powered talent assessment and recruitment platform that automates candidate evaluation, skill matching, and intelligent shortlisting using generative AI and NLP pipelines.',
+    stack: ['React.js', 'Node.js', 'Python', 'Gemini API', 'MongoDB'],
+    githubUrl: 'https://github.com/YashMhasekar/talentmatrix-ai',
+    liveUrl: 'https://talentmatrix-ai.netlify.app/',
+    achievement: null,
+  },
 ];

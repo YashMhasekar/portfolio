@@ -101,6 +101,25 @@ const PROJECT_PLANETS = [
     atmosphereOpacity: 0.28,
     ringColor: 0xb08840,
   },
+  {
+    id: 'saturn',
+    planetName: 'Saturn',
+    projectName: 'TalentMatrix AI',
+    fullTitle: 'Intelligent Talent Assessment Platform',
+    achievement: null,
+    description:
+      'Built an AI-powered talent assessment and recruitment platform that automates candidate evaluation, skill matching, and intelligent shortlisting using generative AI and NLP pipelines.',
+    stack: ['React.js', 'Node.js', 'Python', 'Gemini API', 'MongoDB'],
+    githubUrl: 'https://github.com/YashMhasekar/talentmatrix-ai',
+    liveUrl: 'https://talentmatrix-ai.netlify.app/',
+    glyphClass: 'glyph-saturn',
+    accentColor: new THREE.Color(0xe8d090),
+    burstColor: '#f0dc90',
+    atmosphereColor: 0xe8d090,
+    atmosphereOpacity: 0.32,
+    ringColor: 0xd4bc6a,
+    hasRings: true,
+  },
 ];
 
 // ============================================
@@ -287,6 +306,160 @@ function buildJupiterTex() {
   });
 }
 
+// ---- Saturn ----
+function buildSaturnTex() {
+  return makeCanvasTex(512, (ctx, s) => {
+    // Deep space-black base
+    ctx.fillStyle = '#0a0806';
+    ctx.fillRect(0, 0, s, s);
+
+    // Atmospheric band palette — yellow-gold to cream, with subtle warm browns
+    const bands = [
+      { y: 0.00, h: 0.06, col: '#f5e8b0', alpha: 1.0 },
+      { y: 0.06, h: 0.04, col: '#e8d080', alpha: 1.0 },
+      { y: 0.10, h: 0.07, col: '#f2e4a8', alpha: 1.0 },
+      { y: 0.17, h: 0.03, col: '#c8a840', alpha: 1.0 },
+      { y: 0.20, h: 0.08, col: '#edd898', alpha: 1.0 },
+      { y: 0.28, h: 0.04, col: '#d4b860', alpha: 1.0 },
+      { y: 0.32, h: 0.06, col: '#f0e0a0', alpha: 1.0 },
+      { y: 0.38, h: 0.05, col: '#c8a448', alpha: 1.0 },
+      { y: 0.43, h: 0.09, col: '#ead890', alpha: 1.0 },
+      { y: 0.52, h: 0.04, col: '#b89040', alpha: 1.0 },
+      { y: 0.56, h: 0.07, col: '#f0e0a0', alpha: 1.0 },
+      { y: 0.63, h: 0.04, col: '#d0b458', alpha: 1.0 },
+      { y: 0.67, h: 0.06, col: '#ecd890', alpha: 1.0 },
+      { y: 0.73, h: 0.05, col: '#c0a040', alpha: 1.0 },
+      { y: 0.78, h: 0.08, col: '#f2e4a8', alpha: 1.0 },
+      { y: 0.86, h: 0.04, col: '#d8be68', alpha: 1.0 },
+      { y: 0.90, h: 0.10, col: '#f0dea0', alpha: 1.0 },
+    ];
+
+    bands.forEach(b => {
+      const grad = ctx.createLinearGradient(0, b.y * s, 0, (b.y + b.h) * s);
+      grad.addColorStop(0,   b.col);
+      grad.addColorStop(0.5, b.col);
+      grad.addColorStop(1,   b.col);
+      ctx.fillStyle = b.col;
+      ctx.fillRect(0, b.y * s, s, b.h * s + 1);
+    });
+
+    // Soft band-edge blending — subtle gradient transitions between bands
+    for (let i = 0; i < bands.length - 1; i++) {
+      const edgeY  = (bands[i].y + bands[i].h) * s;
+      const fadeH  = s * 0.025;
+      const blendG = ctx.createLinearGradient(0, edgeY - fadeH, 0, edgeY + fadeH);
+      blendG.addColorStop(0, bands[i].col   + 'cc');
+      blendG.addColorStop(1, bands[i + 1].col + 'cc');
+      ctx.fillStyle = blendG;
+      ctx.fillRect(0, edgeY - fadeH, s, fadeH * 2);
+    }
+
+    // Subtle turbulent cloud wisps along band edges
+    for (let i = 0; i < 60; i++) {
+      const bIdx  = Math.floor(Math.random() * bands.length);
+      const band  = bands[bIdx];
+      const cx    = Math.random() * s;
+      const cy    = (band.y + band.h * Math.random()) * s;
+      const rw    = 18 + Math.random() * 55;
+      const rh    = 2  + Math.random() * 6;
+      const alpha = 0.04 + Math.random() * 0.10;
+      const light = Math.random() > 0.5;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rw, rh, 0, 0, Math.PI * 2);
+      ctx.fillStyle = light
+        ? `rgba(255, 245, 200, ${alpha})`
+        : `rgba(120, 90, 30, ${alpha * 0.8})`;
+      ctx.fill();
+    }
+
+    // Polar haze — slightly lighter creamy caps
+    const northPole = ctx.createLinearGradient(0, 0, 0, s * 0.10);
+    northPole.addColorStop(0, 'rgba(255, 248, 220, 0.55)');
+    northPole.addColorStop(1, 'rgba(255, 248, 220, 0.00)');
+    ctx.fillStyle = northPole;
+    ctx.fillRect(0, 0, s, s * 0.10);
+
+    const southPole = ctx.createLinearGradient(0, s, 0, s * 0.90);
+    southPole.addColorStop(0, 'rgba(255, 248, 220, 0.45)');
+    southPole.addColorStop(1, 'rgba(255, 248, 220, 0.00)');
+    ctx.fillStyle = southPole;
+    ctx.fillRect(0, s * 0.90, s, s * 0.10);
+
+    // Terminator shadow — subtle dark limb on right side
+    const terminator = ctx.createLinearGradient(s * 0.72, 0, s, 0);
+    terminator.addColorStop(0, 'rgba(0,0,0,0)');
+    terminator.addColorStop(1, 'rgba(0,0,0,0.30)');
+    ctx.fillStyle = terminator;
+    ctx.fillRect(0, 0, s, s);
+  });
+}
+
+// ---- Saturn Ring System ----
+// Called inside PlanetScene for id === 'saturn'.
+// Returns a THREE.Group parented to the planet mesh group.
+// The group carries the iconic 26.7° axial tilt.
+function createSaturnRings(quality) {
+  const segs = quality === 'low' ? 96 : quality === 'medium' ? 160 : 256;
+
+  // Each layer: [innerRadius, outerRadius, hexColor, opacity]
+  // Modelled after real Saturnian ring divisions:
+  //  D-ring (faint inner), C-ring, Cassini Division gap, B-ring (brightest),
+  //  A-ring (outer with Encke gap effect)
+  const ringLayers = [
+    // D-ring — very faint, innermost
+    { inner: 1.12, outer: 1.18, color: 0xb8a060, opacity: 0.08 },
+    // C-ring — faint crepe ring
+    { inner: 1.18, outer: 1.30, color: 0xc8b070, opacity: 0.18 },
+    // B-ring inner (dense, bright)
+    { inner: 1.30, outer: 1.46, color: 0xeedda0, opacity: 0.72 },
+    // B-ring mid
+    { inner: 1.46, outer: 1.56, color: 0xf0e4a8, opacity: 0.82 },
+    // B-ring outer
+    { inner: 1.56, outer: 1.64, color: 0xe8d890, opacity: 0.75 },
+    // Cassini Division — empty gap
+    { inner: 1.64, outer: 1.70, color: 0x201808, opacity: 0.06 },
+    // A-ring inner
+    { inner: 1.70, outer: 1.84, color: 0xdacc88, opacity: 0.62 },
+    // Encke Gap region
+    { inner: 1.84, outer: 1.88, color: 0x9a8840, opacity: 0.22 },
+    // A-ring outer
+    { inner: 1.88, outer: 1.98, color: 0xd4c480, opacity: 0.55 },
+    // F-ring — thin bright outer strand
+    { inner: 2.00, outer: 2.03, color: 0xf0e8b0, opacity: 0.35 },
+  ];
+
+  const ringGroup = new THREE.Group();
+
+  ringLayers.forEach(layer => {
+    // Use RingGeometry as-is — its built-in UVs and index buffer are correct.
+    // DO NOT remap UVs: RingGeometry vertices are in the XY plane (z=0),
+    // so any atan2-based remap produces degenerate UVs and clips the geometry.
+    const geo = new THREE.RingGeometry(layer.inner, layer.outer, segs, 4);
+
+    const mat = new THREE.MeshBasicMaterial({
+      color:       layer.color,
+      transparent: true,
+      opacity:     layer.opacity,
+      side:        THREE.DoubleSide,
+      depthWrite:  false,
+      // AdditiveBlending: transparent rings stack correctly without z-fighting
+      blending:    THREE.AdditiveBlending,
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+    // RingGeometry lies in XY plane; rotate to XZ so it wraps the equator
+    mesh.rotation.x = Math.PI / 2;
+    ringGroup.add(mesh);
+  });
+
+  // Saturn's iconic axial tilt: ~26.7°
+  // We tilt around Z (matches planet tilt orientation) and add a slight roll
+  ringGroup.rotation.x =  0.466;  // 26.7° in radians
+  ringGroup.rotation.z =  0.08;
+
+  return ringGroup;
+}
+
 // ============================================
 // 4. ATMOSPHERE SHADER
 // ============================================
@@ -347,8 +520,37 @@ class PlanetScene {
 
   _build() {
     const dpr = getDeviceDPR();
-    const w   = this.canvas.offsetWidth  || 280;
-    const h   = this.canvas.offsetHeight || 280;
+
+    // Saturn: add class to wrapper so CSS removes border-radius and allows overflow.
+    // Compute the expanded canvas size directly (mirrors the CSS calc values)
+    // so the renderer is initialized at the right dimensions immediately —
+    // no need to wait for layout reflow.
+    if (this.data.hasRings) {
+      const parent = this.canvas.parentElement;
+      if (parent) parent.classList.add('planet-wrapper--rings-expanded');
+      // Also tag the canvas itself for belt-and-suspenders border-radius removal
+      this.canvas.classList.add('planet-canvas--saturn');
+    }
+
+    // Base wrapper size (what the grid cell allocates)
+    const baseW = this.data.hasRings
+      ? (this.canvas.parentElement ? this.canvas.parentElement.offsetWidth  || 280 : 280)
+      : (this.canvas.offsetWidth  || 280);
+    const baseH = this.data.hasRings
+      ? (this.canvas.parentElement ? this.canvas.parentElement.offsetHeight || 280 : 280)
+      : (this.canvas.offsetHeight || 280);
+
+    // Expansion: planet scaled 0.55, rings reach ~2.03×0.55 ≈ 1.12 screen units.
+    const expansion = this.data.hasRings ? (() => {
+      const vw = window.innerWidth;
+      if (vw <= 540) return 36;
+      if (vw <= 768) return 36;
+      if (vw <= 1024) return 44;
+      return 56;
+    })() : 0;
+
+    const w = baseW + expansion;
+    const h = baseH + expansion;
 
     this.renderer = new THREE.WebGLRenderer({
       canvas:          this.canvas,
@@ -364,7 +566,9 @@ class PlanetScene {
 
     this.scene  = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 100);
-    this.camera.position.set(0, 0, 3.2);
+    // Saturn needs the camera pulled back so the full ring system fits the frame
+    const camZ  = this.data.hasRings ? 3.2 : 3.2;
+    this.camera.position.set(0, 0.6, camZ);
     this.camera.lookAt(0, 0, 0);
 
     this.scene.add(new THREE.AmbientLight(0x111122, 0.55));
@@ -384,9 +588,10 @@ class PlanetScene {
       earth:   buildEarthTex,
       mars:    buildMarsTex,
       jupiter: buildJupiterTex,
+      saturn:  buildSaturnTex,
     }[this.data.id];
     const tex       = texBuilder();
-    const roughness = { mercury: 0.96, venus: 0.72, earth: 0.58, mars: 0.93, jupiter: 0.65 }[this.data.id];
+    const roughness = { mercury: 0.96, venus: 0.72, earth: 0.58, mars: 0.93, jupiter: 0.65, saturn: 0.60 }[this.data.id];
 
     this.planetMat = new THREE.MeshStandardMaterial({
       map:               tex,
@@ -402,23 +607,44 @@ class PlanetScene {
     );
     this.scene.add(this.planetMesh);
 
+    // Saturn: attach ring system directly to the planet mesh group
+    if (this.data.hasRings) {
+      this.saturnRings = createSaturnRings(this.quality);
+      this.planetMesh.add(this.saturnRings);
+      // Scale planet + rings together — rings are children so they scale too
+      this.planetMesh.scale.setScalar(0.55);
+    }
+
     if (this.data.atmosphereOpacity > 0 && this.quality !== 'low') {
-      this.atmosphere = createAtmosphere(1.10, this.data.atmosphereColor, this.data.atmosphereOpacity);
+      // For Saturn, atmosphere radius scales with the planet body
+      const atmRadius = this.data.hasRings ? 0.61 : 1.10;
+      this.atmosphere = createAtmosphere(atmRadius, this.data.atmosphereColor, this.data.atmosphereOpacity);
       this.scene.add(this.atmosphere);
     }
 
-    const tilts = { mercury: 0, venus: 0.05, earth: 0.41, mars: 0.44, jupiter: 0.05 };
+    const tilts = { mercury: 0, venus: 0.05, earth: 0.41, mars: 0.44, jupiter: 0.05, saturn: 0.47 };
     this.planetMesh.rotation.z = tilts[this.data.id] || 0;
 
-    const speeds = { mercury: 0.008, venus: 0.004, earth: 0.018, mars: 0.016, jupiter: 0.022 };
+    const speeds = { mercury: 0.008, venus: 0.004, earth: 0.018, mars: 0.016, jupiter: 0.022, saturn: 0.013 };
     this.rotSpeed = speeds[this.data.id] * (IS_MOBILE ? 0.7 : 1.0);
 
     this.clock = new THREE.Clock();
   }
 
   resize() {
-    const w = this.canvas.offsetWidth;
-    const h = this.canvas.offsetHeight;
+    let w, h;
+    if (this.data.hasRings) {
+      const parent  = this.canvas.parentElement;
+      const baseW   = parent ? parent.offsetWidth  || 280 : 280;
+      const baseH   = parent ? parent.offsetHeight || 280 : 280;
+      const vw      = window.innerWidth;
+      const exp     = vw <= 540 ? 36 : vw <= 768 ? 36 : vw <= 1024 ? 44 : 56;
+      w = baseW + exp;
+      h = baseH + exp;
+    } else {
+      w = this.canvas.offsetWidth  || 1;
+      h = this.canvas.offsetHeight || 1;
+    }
     if (w < 1 || h < 1) return;
     const dpr = getDeviceDPR();
     this.renderer.setSize(w, h);
@@ -448,6 +674,19 @@ class PlanetScene {
       const delta      = this.clock.getDelta();
       if (!this.isBursting && !this.isReconstructing) {
         this.planetMesh.rotation.y += this.rotSpeed;
+      }
+      // Saturn rings: subtle independent shimmer on ring opacity (atmospheric scattering sim)
+      if (this.saturnRings && !this.isBursting) {
+        const t = performance.now() * 0.0004;
+        this.saturnRings.children.forEach((ringMesh, i) => {
+          const base = ringMesh.material.userData.baseOpacity;
+          if (base === undefined) {
+            ringMesh.material.userData.baseOpacity = ringMesh.material.opacity;
+          }
+          const baseOp = ringMesh.material.userData.baseOpacity;
+          // Very subtle pulse — only ±2% around base opacity
+          ringMesh.material.opacity = baseOp * (1.0 + 0.02 * Math.sin(t + i * 0.7));
+        });
       }
       this._updateHover(delta);
       this.renderer.render(this.scene, this.camera);
